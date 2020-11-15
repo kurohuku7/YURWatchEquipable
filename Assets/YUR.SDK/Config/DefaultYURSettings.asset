@@ -29,4 +29,4 @@ MonoBehaviour:
   LayerToSet: Default
   Font: {fileID: 11400000, guid: b067329db253385498352920571f5e20, type: 2}
   _turnOffYURServiceOnDisable: 1
-  _debugLogging: 1
+  _debugLogging: 0
