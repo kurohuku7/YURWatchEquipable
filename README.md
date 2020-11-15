@@ -10,6 +10,7 @@ This program play sounds.
 
 ## Require env
 - SteamVR (not tested on Oculus devices)
+- Logged in to YUR before launch. (not tested on logged out)
 
 ## Development env
 - Unity 2020.1.11f1 
