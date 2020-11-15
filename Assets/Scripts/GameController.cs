@@ -57,8 +57,8 @@ public class GameController : MonoBehaviour
 
     private void ChangeWatch(GameObject toWatch)
     {
+        // Note: Equipped watch's position is set in Mesh game object under each watch.
         // Note: commonMesh prefab has no Mesh object so unpacked it in the editor and add Mesh object manually.
-        Debug.Log(watchSocket);
         var currentMesh = watchSocket.transform.Find("Mesh");
         if (currentMesh == null)
         {
@@ -68,8 +68,7 @@ public class GameController : MonoBehaviour
         var newMesh = toWatch.transform.Find("Mesh");
         Instantiate(newMesh.gameObject, currentMesh.parent);
         Destroy(currentMesh.gameObject);
-        newMesh.transform.localPosition = new Vector3(0, 0, 0);
-
+        
         var goOnlineEvent = toWatch.GetComponent<WatchReferenceContainer>().GoOnlineEvent;
         var goOfflineEvent = toWatch.GetComponent<WatchReferenceContainer>().GoOfflineEvent;
         var watchReferenceContainer = watchSocket.GetComponent<WatchReferenceContainer>();
