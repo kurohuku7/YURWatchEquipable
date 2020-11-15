@@ -18,43 +18,19 @@ public class GameController : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return WaitWatchInitialize();
+        // TODO: detect initialize event.
+        yield return new WaitForSeconds(5);
+        watch.ToggleWatch(true);
+        yield return new WaitForSeconds(3);
+
         (watchSocket, autoloadedWatch) = GetWatchObjects();
 
         // Switch to default watch object (watch socket) to change watch type.
         autoloadedWatch.SetActive(false);
         watchSocket.SetActive(true);
 
-        // StartCoroutine(ChangeLoop());
-    }
-
-    private IEnumerator ChangeLoop()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(3);
-            ChangeWatch(commonWatch);
-
-            yield return new WaitForSeconds(3);
-            ChangeWatch(uncommonWatch);
-
-            yield return new WaitForSeconds(3);
-            ChangeWatch(rareWatch);
-
-            yield return new WaitForSeconds(3);
-            ChangeWatch(epicWatch);
-
-            yield return new WaitForSeconds(3);
-            ChangeWatch(legendaryWatch);
-        }
-    }
-
-    private IEnumerator WaitWatchInitialize()
-    {
-        // TODO: detect initialize event.
-        yield return new WaitForSeconds(5);
-        watch.ToggleWatch(true);
-        yield return new WaitForSeconds(1);
+        // Initial watch
+        ChangeWatch(commonWatch);
     }
 
     private (GameObject, GameObject) GetWatchObjects()
@@ -81,16 +57,28 @@ public class GameController : MonoBehaviour
 
     private void ChangeWatch(GameObject toWatch)
     {
-        var currentMesh = watchSocket.transform.Find("Mesh").gameObject;
-        var newMesh = toWatch.transform.Find("Mesh").gameObject;
-        Destroy(currentMesh);
-        Instantiate(newMesh, currentMesh.transform.parent);
+        // Note: commonMesh prefab has no Mesh object so unpacked it in the editor and add Mesh object manually.
+        Debug.Log(watchSocket);
+        var currentMesh = watchSocket.transform.Find("Mesh");
+        if (currentMesh == null)
+        {
+            // TODO: fix search mesh by without name
+            currentMesh = watchSocket.transform.Find("Mesh(Clone)");
+        }
+        var newMesh = toWatch.transform.Find("Mesh");
+        Instantiate(newMesh.gameObject, currentMesh.parent);
+        Destroy(currentMesh.gameObject);
+        newMesh.transform.localPosition = new Vector3(0, 0, 0);
 
         var goOnlineEvent = toWatch.GetComponent<WatchReferenceContainer>().GoOnlineEvent;
         var goOfflineEvent = toWatch.GetComponent<WatchReferenceContainer>().GoOfflineEvent;
         var watchReferenceContainer = watchSocket.GetComponent<WatchReferenceContainer>();
         watchReferenceContainer.GoOnlineEvent = goOnlineEvent;
         watchReferenceContainer.GoOnlineEvent = goOnlineEvent;
-
+    }
+    
+    public void OnWatchEnter(GameObject watch)
+    {
+        ChangeWatch(watch);
     }
 }
