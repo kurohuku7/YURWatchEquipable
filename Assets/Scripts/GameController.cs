@@ -7,19 +7,17 @@ using YUR.SDK.Core.Watch;
 public class GameController : MonoBehaviour
 {
     public YURWatch watch;
-    public GameObject commonWatch;
-    public GameObject uncommonWatch;
-    public GameObject rareWatch;
-    public GameObject epicWatch;
-    public GameObject legendaryWatch;
-    public GameObject WatchContainer;
+    public GameObject commonWatch; // First watch.
+    public GameObject watchContainer;
+    public List<AudioClip> audioClips;
+    public AudioSource audioSource;
 
     private GameObject watchSocket = null;
     private GameObject autoloadedWatch = null;
 
     private IEnumerator Start()
     {
-        WatchContainer.SetActive(false);
+        watchContainer.SetActive(false);
 
         // This program uses the default watch as changable watch (watchSocket).
         // Toggle to default watch.
@@ -37,7 +35,7 @@ public class GameController : MonoBehaviour
         watchSocket.SetActive(true);
 
         // First watch is common.
-        WatchContainer.SetActive(true);
+        watchContainer.SetActive(true);
         ChangeWatch(commonWatch);
     }
 
@@ -77,6 +75,8 @@ public class GameController : MonoBehaviour
 
     private void ChangeWatch(GameObject toWatch)
     {
+        PlaySound();
+
         // Note: Equipped watch's position is set in Mesh game object under each watch.
         // Note: commonMesh prefab has no Mesh object so unpacked it in the editor and add Mesh object manually.
         var currentMesh = watchSocket.transform.Find("Mesh");
@@ -90,7 +90,6 @@ public class GameController : MonoBehaviour
         Destroy(currentMesh.gameObject);
         
         // TODO: Copy particle system of the legendary watch.
-
         var goOnlineEvent = toWatch.GetComponent<WatchReferenceContainer>().GoOnlineEvent;
         var goOfflineEvent = toWatch.GetComponent<WatchReferenceContainer>().GoOfflineEvent;
         var watchReferenceContainer = watchSocket.GetComponent<WatchReferenceContainer>();
@@ -101,5 +100,11 @@ public class GameController : MonoBehaviour
     public void OnWatchEnter(GameObject watch)
     {
         ChangeWatch(watch);
+    }
+
+    private void PlaySound()
+    {
+        audioSource.clip = audioClips[UnityEngine.Random.Range(0, audioClips.Count)];
+        audioSource.Play();
     }
 }
